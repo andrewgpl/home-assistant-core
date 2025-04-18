@@ -1,6 +1,7 @@
 """Initialize the Plant Tracker integration."""
 
 import logging
+from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -9,6 +10,7 @@ from .const import (
     CONF_PICTURE,
     CONF_PICTURES_PATH,
     CONF_PLANT_ID,
+    DEFAULT_PICTURE,
     DEFAULT_PICTURES_PATH,
     DOMAIN,
     PLATFORMS,
@@ -51,8 +53,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a Plant Tracker config entry."""
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    """Unload a Plant Tracker config entry and optionally delete image."""
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+    if unload_ok:
+        picture_name = entry.options.get(CONF_PICTURE) or entry.data.get(CONF_PICTURE)
+        if picture_name and picture_name != DEFAULT_PICTURE:
+            pictures_path = entry.options.get(
+                CONF_PICTURES_PATH, DEFAULT_PICTURES_PATH
+            ).replace("/local/", "")
+            full_path = Path(hass.config.path("www")) / pictures_path / picture_name
+
+            if full_path.exists():
+                try:
+                    full_path.unlink()
+                    _LOGGER.info("Deleted image for removed plant: %s", full_path)
+                except OSError:
+                    _LOGGER.exception(
+                        "Failed to delete image for removed plant: %s", full_path
+                    )
+
+    return unload_ok
 
 
 async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:

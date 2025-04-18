@@ -1,17 +1,18 @@
 {
   "config": {
     "step": {
+      "init": {
+        "title": "Edytuj opcje rośliny",
+        "data": {
+          "picture": "Adres URL obrazka lub ścieżka /local",
+          "clear_picture": "Usuń aktualne zdjęcie"
+        }
+      },
       "user": {
         "title": "Dodaj roślinę",
         "data": {
           "plant_id": "ID rośliny",
           "name": "Nazwa rośliny",
-          "picture": "Adres URL obrazka lub ścieżka /local"
-        }
-      },
-      "init": {
-        "title": "Edytuj opcje rośliny",
-        "data": {
           "picture": "Adres URL obrazka lub ścieżka /local"
         }
       }

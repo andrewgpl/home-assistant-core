@@ -1,17 +1,18 @@
 {
   "config": {
     "step": {
+      "init": {
+        "title": "Edit Plant Options",
+        "data": {
+          "picture": "Picture URL or /local path",
+          "clear_picture": "Clear current picture"
+        }
+      },
       "user": {
         "title": "Add a Plant",
         "data": {
           "plant_id": "Plant ID",
           "name": "Plant Name",
-          "picture": "Picture URL or /local path"
-        }
-      },
-      "init": {
-        "title": "Edit Plant Options",
-        "data": {
           "picture": "Picture URL or /local path"
         }
       }
