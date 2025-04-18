@@ -1,6 +1,7 @@
 """Sensor entities for the Plant Tracker integration."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
+import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -13,8 +14,14 @@ from .const import (
     ATTR_LAST_FERTILIZED,
     ATTR_LAST_WATERED,
     ATTR_PICTURE,
+    CONF_PICTURES_PATH,
+    DEFAULT_PICTURE,
+    DEFAULT_PICTURES_PATH,
     DOMAIN,
 )
+
+_LOGGER = logging.getLogger(__name__)
+SCAN_INTERVAL = timedelta(hours=1)
 
 
 async def async_setup_entry(
@@ -33,6 +40,8 @@ async def async_setup_entry(
 class PlantSensor(RestoreEntity):
     """Sensor to track the state of a plant."""
 
+    _attr_should_poll = True
+
     def __init__(self, name: str, plant_id: str, picture=None) -> None:
         """Initialize the PlantSensor entity."""
         self._name = name
@@ -42,6 +51,7 @@ class PlantSensor(RestoreEntity):
         self._last_fertilized = None
         self._attr_name = f"{name} Sensor"
         self._attr_icon = "mdi:leaf"
+        self._attr_native_value = "idle"
 
     @property
     def unique_id(self) -> str:
@@ -61,10 +71,17 @@ class PlantSensor(RestoreEntity):
     @property
     def extra_state_attributes(self):
         """Return extra state attributes for the plant sensor."""
+
+        pictures_path = self.hass.data[DOMAIN].get(
+            CONF_PICTURES_PATH, DEFAULT_PICTURES_PATH
+        )
+        picture_name = self._picture if self._picture else DEFAULT_PICTURE
+        picture_url = f"{pictures_path}/{picture_name}"
+
         attrs = {
             ATTR_LAST_WATERED: self._last_watered,
             ATTR_LAST_FERTILIZED: self._last_fertilized,
-            ATTR_PICTURE: self._picture,
+            ATTR_PICTURE: picture_url,
         }
         if self._last_watered:
             watered_time = datetime.fromisoformat(self._last_watered)
@@ -81,7 +98,11 @@ class PlantSensor(RestoreEntity):
         if state:
             self._last_watered = state.attributes.get(ATTR_LAST_WATERED)
             self._last_fertilized = state.attributes.get(ATTR_LAST_FERTILIZED)
-            self._picture = state.attributes.get(ATTR_PICTURE)
+
+    async def async_update(self) -> None:
+        """Update sensor state."""
+        _LOGGER.debug("Updating PlantSensor for plant_id: %s", self._plant_id)
+        self.async_write_ha_state()
 
     def water(self):
         """Mark the plant as watered."""

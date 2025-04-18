@@ -8,6 +8,12 @@
           "name": "Plant Name",
           "picture": "Picture URL or /local path"
         }
+      },
+      "init": {
+        "title": "Edit Plant Options",
+        "data": {
+          "picture": "Picture URL or /local path"
+        }
       }
     }
   }

@@ -3,8 +3,10 @@
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.core import callback
 
 from .const import CONF_NAME, CONF_PICTURE, CONF_PLANT_ID, DOMAIN
+from .options_flow import PlantTrackerOptionsFlowHandler
 
 
 class PlantTrackerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -21,7 +23,7 @@ class PlantTrackerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data={
                     CONF_PLANT_ID: user_input[CONF_PLANT_ID],
                     CONF_NAME: user_input[CONF_NAME],
-                    CONF_PICTURE: user_input.get(CONF_PICTURE, None),
+                    CONF_PICTURE: user_input.get(CONF_PICTURE, ""),
                 },
             )
 
@@ -35,3 +37,11 @@ class PlantTrackerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             ),
         )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> PlantTrackerOptionsFlowHandler:
+        """Get the options flow."""
+        return PlantTrackerOptionsFlowHandler(config_entry)
