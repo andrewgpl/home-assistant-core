@@ -44,4 +44,4 @@ class PlantTrackerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         config_entry: config_entries.ConfigEntry,
     ) -> PlantTrackerOptionsFlowHandler:
         """Get the options flow."""
-        return PlantTrackerOptionsFlowHandler(config_entry)
+        return PlantTrackerOptionsFlowHandler()

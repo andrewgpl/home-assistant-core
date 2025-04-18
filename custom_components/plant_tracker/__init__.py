@@ -6,12 +6,14 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from .const import (
+    CONF_PICTURE,
     CONF_PICTURES_PATH,
     CONF_PLANT_ID,
     DEFAULT_PICTURES_PATH,
     DOMAIN,
     PLATFORMS,
 )
+from .sensor import PlantSensor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -43,9 +45,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    entry.async_on_unload(entry.add_update_listener(async_update_listener))
+
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a Plant Tracker config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+
+async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Handle updated options for Plant Tracker."""
+    plant_id = entry.data[CONF_PLANT_ID]
+    sensor: PlantSensor = hass.data[DOMAIN].get(plant_id)
+
+    if not sensor:
+        return
+
+    new_picture = entry.options.get(CONF_PICTURE, entry.data.get(CONF_PICTURE, ""))
+    await sensor.async_update_picture(new_picture)

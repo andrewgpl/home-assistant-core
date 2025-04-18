@@ -72,9 +72,12 @@ class PlantSensor(RestoreEntity):
     def extra_state_attributes(self):
         """Return extra state attributes for the plant sensor."""
 
-        pictures_path = self.hass.data[DOMAIN].get(
-            CONF_PICTURES_PATH, DEFAULT_PICTURES_PATH
+        pictures_path = (
+            self.hass.data[DOMAIN]
+            .get(CONF_PICTURES_PATH, DEFAULT_PICTURES_PATH)
+            .lstrip("/")
         )
+
         picture_name = self._picture if self._picture else DEFAULT_PICTURE
         picture_url = f"{pictures_path}/{picture_name}"
 
@@ -114,7 +117,10 @@ class PlantSensor(RestoreEntity):
         self._last_fertilized = datetime.now().isoformat()
         self.schedule_update_ha_state()
 
-    def update_picture(self, picture_url):
+    async def async_update_picture(self, picture_name: str | None):
         """Update the picture of the plant."""
-        self._picture = picture_url
-        self.schedule_update_ha_state()
+        if picture_name == "":
+            picture_name = None
+
+        self._picture = picture_name
+        await self.async_update()
