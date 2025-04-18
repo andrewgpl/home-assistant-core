@@ -1,0 +1,11 @@
+{
+  "domain": "plant_tracker",
+  "name": "Plant Tracker",
+  "version": "1.0.0",
+  "config_flow": true,
+  "codeowners": ["@andrewgpl"],
+  "documentation": "https://github.com/andrewgpl/home-assistant-core",
+  "dependencies": [],
+  "iot_class": "local_polling",
+  "icon": "mdi:sprout"
+}

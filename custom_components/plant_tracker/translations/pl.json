@@ -1,0 +1,14 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Dodaj Roślinę",
+        "data": {
+          "plant_id": "ID Rośliny",
+          "name": "Nazwa Rośliny",
+          "picture": "URL obrazu lub ścieżka lokalna (/local)"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add a Plant",
+        "data": {
+          "plant_id": "Plant ID",
+          "name": "Plant Name",
+          "picture": "Picture URL or /local path"
+        }
+      }
+    }
+  }
+}
